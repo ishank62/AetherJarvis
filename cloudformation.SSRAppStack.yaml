@@ -1,0 +1,656 @@
+Parameters:
+  mySiteBucketName:
+    Type: String
+    Description: The name of S3 bucket to upload react application
+  BootstrapVersion:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /cdk-bootstrap/hnb659fds/version
+    Description: Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]
+Resources:
+  ssrsite39803435:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName:
+        Ref: mySiteBucketName
+      Tags:
+        - Key: aws-cdk:cr-owned:1f9e4d8c
+          Value: "true"
+      WebsiteConfiguration:
+        ErrorDocument: error.html
+        IndexDocument: index.html
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Metadata:
+      aws:cdk:path: SSRAppStack/ssr-site/Resource
+  ssrsitePolicy6685C54C:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: ssrsite39803435
+      PolicyDocument:
+        Statement:
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Principal:
+              CanonicalUser:
+                Fn::GetAtt:
+                  - ssroia9E8C3143
+                  - S3CanonicalUserId
+            Resource:
+              - Fn::GetAtt:
+                  - ssrsite39803435
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ssrsite39803435
+                        - Arn
+                    - /*
+          - Action: s3:GetObject
+            Effect: Allow
+            Principal:
+              CanonicalUser:
+                Fn::GetAtt:
+                  - ssroia9E8C3143
+                  - S3CanonicalUserId
+            Resource:
+              Fn::Join:
+                - ""
+                - - Fn::GetAtt:
+                      - ssrsite39803435
+                      - Arn
+                  - /*
+        Version: "2012-10-17"
+    Metadata:
+      aws:cdk:path: SSRAppStack/ssr-site/Policy/Resource
+  ssroia9E8C3143:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: Allows CloudFront to reach the bucket
+    Metadata:
+      aws:cdk:path: SSRAppStack/ssr-oia/Resource
+  ClientsideReactappAwsCliLayer3157F352:
+    Type: AWS::Lambda::LayerVersion
+    Properties:
+      Content:
+        S3Bucket:
+          Fn::Sub: cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1
+        S3Key: 292870ae2617f1c4d62ff18422e009afd534a342c17877fd1b931fb8d8a62abc.zip
+      Description: /opt/awscli/aws
+    Metadata:
+      aws:cdk:path: SSRAppStack/Client-side React app/AwsCliLayer/Resource
+      aws:asset:path: asset.292870ae2617f1c4d62ff18422e009afd534a342c17877fd1b931fb8d8a62abc.zip
+      aws:asset:is-bundled: false
+      aws:asset:property: Content
+  ClientsideReactappCustomResource5A6F1300:
+    Type: Custom::CDKBucketDeployment
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536
+          - Arn
+      SourceBucketNames:
+        - Fn::Sub: cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1
+      SourceObjectKeys:
+        - cc47c5cf250c2eb1bc325e76f198e6d9ac8418406981a5dfb07ccea07ca7d041.zip
+      DestinationBucketName:
+        Ref: ssrsite39803435
+      Prune: true
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Metadata:
+      aws:cdk:path: SSRAppStack/Client-side React app/CustomResource/Default
+  CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    Metadata:
+      aws:cdk:path: SSRAppStack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/Resource
+  CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - ":s3:::"
+                    - Fn::Sub: cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1
+              - Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - ":s3:::"
+                    - Fn::Sub: cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1
+                    - /*
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+              - s3:DeleteObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ssrsite39803435
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ssrsite39803435
+                        - Arn
+                    - /*
+        Version: "2012-10-17"
+      PolicyName: CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF
+      Roles:
+        - Ref: CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265
+    Metadata:
+      aws:cdk:path: SSRAppStack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/DefaultPolicy/Resource
+  CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Fn::Sub: cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1
+        S3Key: 9eb41a5505d37607ac419321497a4f8c21cf0ee1f9b4a6b29aa04301aea5c7fd.zip
+      Role:
+        Fn::GetAtt:
+          - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265
+          - Arn
+      Environment:
+        Variables:
+          AWS_CA_BUNDLE: /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
+      Handler: index.handler
+      Layers:
+        - Ref: ClientsideReactappAwsCliLayer3157F352
+      Runtime: python3.9
+      Timeout: 900
+    DependsOn:
+      - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF
+      - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265
+    Metadata:
+      aws:cdk:path: SSRAppStack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/Resource
+      aws:asset:path: asset.9eb41a5505d37607ac419321497a4f8c21cf0ee1f9b4a6b29aa04301aea5c7fd
+      aws:asset:is-bundled: false
+      aws:asset:property: Code
+  ssrHandlerServiceRole086FB3F9:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    Metadata:
+      aws:cdk:path: SSRAppStack/ssrHandler/ServiceRole/Resource
+  ssrHandler92F221AC:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Fn::Sub: cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1
+        S3Key: 5aff513e2a8b386aa9b06cf9c4087dd0af7656e1308f1abeba18a7928ee1a2d7.zip
+      Role:
+        Fn::GetAtt:
+          - ssrHandlerServiceRole086FB3F9
+          - Arn
+      Handler: index.handler
+      MemorySize: 128
+      Runtime: nodejs16.x
+      Timeout: 5
+    DependsOn:
+      - ssrHandlerServiceRole086FB3F9
+    Metadata:
+      aws:cdk:path: SSRAppStack/ssrHandler/Resource
+      aws:asset:path: asset.5aff513e2a8b386aa9b06cf9c4087dd0af7656e1308f1abeba18a7928ee1a2d7
+      aws:asset:is-bundled: false
+      aws:asset:property: Code
+  ssrEdgeHandlerServiceRole338946DD:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: edgelambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    Metadata:
+      aws:cdk:path: SSRAppStack/ssrEdgeHandler/ServiceRole/Resource
+  ssrEdgeHandler443FC458:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Fn::Sub: cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1
+        S3Key: 009b1193abc0efe1f166401705dcebd7974191b938db40490d2815ab7469e386.zip
+      Role:
+        Fn::GetAtt:
+          - ssrEdgeHandlerServiceRole338946DD
+          - Arn
+      Handler: index.handler
+      MemorySize: 128
+      Runtime: nodejs16.x
+      Timeout: 5
+    DependsOn:
+      - ssrEdgeHandlerServiceRole338946DD
+    Metadata:
+      aws:cdk:path: SSRAppStack/ssrEdgeHandler/Resource
+      aws:asset:path: asset.009b1193abc0efe1f166401705dcebd7974191b938db40490d2815ab7469e386
+      aws:asset:is-bundled: false
+      aws:asset:property: Code
+  ssrEdgeHandlerVersion46DD2346:
+    Type: AWS::Lambda::Version
+    Properties:
+      FunctionName:
+        Ref: ssrEdgeHandler443FC458
+    Metadata:
+      aws:cdk:path: SSRAppStack/ssrEdgeHandlerVersion/Resource
+  ssrEndpoint84341A64:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: ssrEndpoint
+    Metadata:
+      aws:cdk:path: SSRAppStack/ssrEndpoint/Resource
+  ssrEndpointCloudWatchRoleCB6761D0:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: apigateway.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+    Metadata:
+      aws:cdk:path: SSRAppStack/ssrEndpoint/CloudWatchRole/Resource
+  ssrEndpointAccountB096A98D:
+    Type: AWS::ApiGateway::Account
+    Properties:
+      CloudWatchRoleArn:
+        Fn::GetAtt:
+          - ssrEndpointCloudWatchRoleCB6761D0
+          - Arn
+    DependsOn:
+      - ssrEndpoint84341A64
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+    Metadata:
+      aws:cdk:path: SSRAppStack/ssrEndpoint/Account
+  ssrEndpointDeployment345D704B444a8180828c1df3e9d3bce6d87cae1b:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId:
+        Ref: ssrEndpoint84341A64
+      Description: Automatically created by the RestApi construct
+    DependsOn:
+      - ssrEndpointproxyANY3E259960
+      - ssrEndpointproxyF8CFA92E
+      - ssrEndpointANY37B36243
+    Metadata:
+      aws:cdk:path: SSRAppStack/ssrEndpoint/Deployment/Resource
+  ssrEndpointDeploymentStageprod71C11F15:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      RestApiId:
+        Ref: ssrEndpoint84341A64
+      DeploymentId:
+        Ref: ssrEndpointDeployment345D704B444a8180828c1df3e9d3bce6d87cae1b
+      StageName: prod
+    DependsOn:
+      - ssrEndpointAccountB096A98D
+    Metadata:
+      aws:cdk:path: SSRAppStack/ssrEndpoint/DeploymentStage.prod/Resource
+  ssrEndpointproxyF8CFA92E:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId:
+        Fn::GetAtt:
+          - ssrEndpoint84341A64
+          - RootResourceId
+      PathPart: "{proxy+}"
+      RestApiId:
+        Ref: ssrEndpoint84341A64
+    Metadata:
+      aws:cdk:path: SSRAppStack/ssrEndpoint/Default/{proxy+}/Resource
+  ssrEndpointproxyANYApiPermissionSSRAppStackssrEndpointDECD1C12ANYproxyEC1F3760:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - ssrHandler92F221AC
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - "arn:"
+            - Ref: AWS::Partition
+            - ":execute-api:us-east-1:"
+            - Ref: AWS::AccountId
+            - ":"
+            - Ref: ssrEndpoint84341A64
+            - /
+            - Ref: ssrEndpointDeploymentStageprod71C11F15
+            - /*/*
+    Metadata:
+      aws:cdk:path: SSRAppStack/ssrEndpoint/Default/{proxy+}/ANY/ApiPermission.SSRAppStackssrEndpointDECD1C12.ANY..{proxy+}
+  ssrEndpointproxyANYApiPermissionTestSSRAppStackssrEndpointDECD1C12ANYproxyFDBD96FC:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - ssrHandler92F221AC
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - "arn:"
+            - Ref: AWS::Partition
+            - ":execute-api:us-east-1:"
+            - Ref: AWS::AccountId
+            - ":"
+            - Ref: ssrEndpoint84341A64
+            - /test-invoke-stage/*/*
+    Metadata:
+      aws:cdk:path: SSRAppStack/ssrEndpoint/Default/{proxy+}/ANY/ApiPermission.Test.SSRAppStackssrEndpointDECD1C12.ANY..{proxy+}
+  ssrEndpointproxyANY3E259960:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: ANY
+      ResourceId:
+        Ref: ssrEndpointproxyF8CFA92E
+      RestApiId:
+        Ref: ssrEndpoint84341A64
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri:
+          Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :apigateway:us-east-1:lambda:path/2015-03-31/functions/
+              - Fn::GetAtt:
+                  - ssrHandler92F221AC
+                  - Arn
+              - /invocations
+    Metadata:
+      aws:cdk:path: SSRAppStack/ssrEndpoint/Default/{proxy+}/ANY/Resource
+  ssrEndpointANYApiPermissionSSRAppStackssrEndpointDECD1C12ANY69132FA2:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - ssrHandler92F221AC
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - "arn:"
+            - Ref: AWS::Partition
+            - ":execute-api:us-east-1:"
+            - Ref: AWS::AccountId
+            - ":"
+            - Ref: ssrEndpoint84341A64
+            - /
+            - Ref: ssrEndpointDeploymentStageprod71C11F15
+            - /*/
+    Metadata:
+      aws:cdk:path: SSRAppStack/ssrEndpoint/Default/ANY/ApiPermission.SSRAppStackssrEndpointDECD1C12.ANY..
+  ssrEndpointANYApiPermissionTestSSRAppStackssrEndpointDECD1C12ANYFA9F61F6:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - ssrHandler92F221AC
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - "arn:"
+            - Ref: AWS::Partition
+            - ":execute-api:us-east-1:"
+            - Ref: AWS::AccountId
+            - ":"
+            - Ref: ssrEndpoint84341A64
+            - /test-invoke-stage/*/
+    Metadata:
+      aws:cdk:path: SSRAppStack/ssrEndpoint/Default/ANY/ApiPermission.Test.SSRAppStackssrEndpointDECD1C12.ANY..
+  ssrEndpointANY37B36243:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: ANY
+      ResourceId:
+        Fn::GetAtt:
+          - ssrEndpoint84341A64
+          - RootResourceId
+      RestApiId:
+        Ref: ssrEndpoint84341A64
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri:
+          Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :apigateway:us-east-1:lambda:path/2015-03-31/functions/
+              - Fn::GetAtt:
+                  - ssrHandler92F221AC
+                  - Arn
+              - /invocations
+    Metadata:
+      aws:cdk:path: SSRAppStack/ssrEndpoint/Default/ANY/Resource
+  ssrcdnCFDistribution499355C4:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        CacheBehaviors:
+          - AllowedMethods:
+              - GET
+              - HEAD
+            CachedMethods:
+              - GET
+              - HEAD
+            Compress: true
+            ForwardedValues:
+              Cookies:
+                Forward: none
+              QueryString: false
+            PathPattern: /ssr
+            TargetOriginId: origin2
+            ViewerProtocolPolicy: redirect-to-https
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - GET
+            - HEAD
+          CachedMethods:
+            - GET
+            - HEAD
+          Compress: true
+          ForwardedValues:
+            Cookies:
+              Forward: none
+            QueryString: false
+          LambdaFunctionAssociations:
+            - EventType: origin-request
+              LambdaFunctionARN:
+                Ref: ssrEdgeHandlerVersion46DD2346
+          TargetOriginId: origin1
+          ViewerProtocolPolicy: redirect-to-https
+        DefaultRootObject: index.html
+        Enabled: true
+        HttpVersion: http2
+        IPV6Enabled: true
+        Origins:
+          - ConnectionAttempts: 3
+            ConnectionTimeout: 10
+            DomainName:
+              Fn::GetAtt:
+                - ssrsite39803435
+                - RegionalDomainName
+            Id: origin1
+            S3OriginConfig:
+              OriginAccessIdentity:
+                Fn::Join:
+                  - ""
+                  - - origin-access-identity/cloudfront/
+                    - Ref: ssroia9E8C3143
+          - ConnectionAttempts: 3
+            ConnectionTimeout: 10
+            CustomOriginConfig:
+              HTTPPort: 80
+              HTTPSPort: 443
+              OriginKeepaliveTimeout: 5
+              OriginProtocolPolicy: https-only
+              OriginReadTimeout: 30
+              OriginSSLProtocols:
+                - TLSv1.2
+            DomainName:
+              Fn::Join:
+                - ""
+                - - Ref: ssrEndpoint84341A64
+                  - .execute-api.us-east-1.amazonaws.com
+            Id: origin2
+            OriginPath: /prod
+        PriceClass: PriceClass_100
+        ViewerCertificate:
+          CloudFrontDefaultCertificate: true
+    Metadata:
+      aws:cdk:path: SSRAppStack/ssr-cdn/CFDistribution
+  CDKMetadata:
+    Type: AWS::CDK::Metadata
+    Properties:
+      Analytics: v2:deflate64:H4sIAAAAAAAA/21SyW7CMBD9Fu7GZblwDUGVKlGBQGqPkeMM6YBjI49dGkX599oO24HTvHmzP3vGFxM+GYkLjWV1Gissebd3Qp5YftBbYUUDDiwL8aKjOe+WXp7AxeAVDWZrFMr2QV/9wVkKgp5JZXx1sEY73m0s1qgzKYHoowLt0KXiPOa8x5zXGffwN5QrJGex9A6NjrXPfs9oXnQVnJVpm1DMh0VWd4IJInDEs2h6pkRTVoJ3oc1atGC/wFJsu0ddK3BGv3st06A7CKl3fEsP3BPcgm2QKK2DouHdziiIgWQfig2oZ+KMtXBwES3v1mmhHZDLzphqHjCIYnw44emaeP7DC+9Xp0EDCKXGWwnxGdjWmr/2xlwbD/gT3I+pIjWgvo94493Zu6tAhYriFOEzSIU8u1CuMOnFko5xXBCM5Z6caV4OuYGeaVMBP9Lb73TBpzM+HR0JcWzDYdgA3w32Hx03SwieAgAA
+    Metadata:
+      aws:cdk:path: SSRAppStack/CDKMetadata/Default
+Outputs:
+  Bucket:
+    Value:
+      Ref: ssrsite39803435
+  ssrEndpoint02F5615F:
+    Value:
+      Fn::Join:
+        - ""
+        - - https://
+          - Ref: ssrEndpoint84341A64
+          - .execute-api.us-east-1.
+          - Ref: AWS::URLSuffix
+          - /
+          - Ref: ssrEndpointDeploymentStageprod71C11F15
+          - /
+  SSRAPIURL:
+    Value:
+      Fn::Join:
+        - ""
+        - - https://
+          - Ref: ssrEndpoint84341A64
+          - .execute-api.us-east-1.
+          - Ref: AWS::URLSuffix
+          - /
+          - Ref: ssrEndpointDeploymentStageprod71C11F15
+          - /
+  CFURL:
+    Value:
+      Fn::Join:
+        - ""
+        - - https://
+          - Fn::GetAtt:
+              - ssrcdnCFDistribution499355C4
+              - DomainName
+  LambdaSSRURL:
+    Value:
+      Fn::Join:
+        - ""
+        - - https://
+          - Fn::GetAtt:
+              - ssrcdnCFDistribution499355C4
+              - DomainName
+          - /ssr
+  LambdaEdgeSSRURL:
+    Value:
+      Fn::Join:
+        - ""
+        - - https://
+          - Fn::GetAtt:
+              - ssrcdnCFDistribution499355C4
+              - DomainName
+          - /edgessr
+Rules:
+  CheckBootstrapVersion:
+    Assertions:
+      - Assert:
+          Fn::Not:
+            - Fn::Contains:
+                - - "1"
+                  - "2"
+                  - "3"
+                  - "4"
+                  - "5"
+                - Ref: BootstrapVersion
+        AssertDescription: CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.
+
