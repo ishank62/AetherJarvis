@@ -1,0 +1,15 @@
+{
+    "httpMethod": "POST",
+    "path": "/prompt",
+    "queryStringParameters": null,
+    "headers": {
+        "Content-Type": "application/json"
+    },
+    "body": "{\"num1\": 12, \"num2\": 34, \"operator\": \"+\"}",
+    "requestContext": {
+        "http": {
+            "method": "POST",
+            "path": "/prompt"
+        }
+    }
+}
