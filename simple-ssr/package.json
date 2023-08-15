@@ -17,7 +17,8 @@
     "react-contenteditable": "^3.3.6",
     "react-dom": "^18.2.0",
     "react-markdown": "^8.0.5",
-    "react-scripts": "^5.0.1"
+    "react-scripts": "^5.0.1",
+    "url-loader": "^4.1.1"
   },
   "scripts": {
     "start": "react-scripts start",
