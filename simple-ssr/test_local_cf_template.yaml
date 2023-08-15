@@ -1,0 +1,13 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform:  AWS::Serverless-2016-10-31
+Description: >
+  invoke lambda local
+
+
+Resources:
+  LambdaNodejsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: api/
+      Handler: index.handler
+      Runtime: nodejs18.x
