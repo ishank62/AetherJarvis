@@ -6,6 +6,7 @@ import PromptResponseList from "../PromptResponseList/PromptResponseList";
 import config from "../../config.json";
 const url = config.SSRApiStack.apiurl;
 const ModelValueType = 'gpt' | 'codex' | 'image';
+
 const Mainpage = () => {
 
   const [responseList, setResponseList] = useState([]);

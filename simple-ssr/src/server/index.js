@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOMServer from "react-dom/server";
-// import SSRApp from "../SSRApp";
-import Mainpage from '../components/App/App';
+import SSRApp from "../SSRApp";
+// import Mainpage from '../components/App/App';
 
 const indexFile = `
 <!DOCTYPE html>
@@ -27,7 +27,7 @@ const handler = async function (event) {
   try {
     // const url = config.SSRApiStack.apiurl;
     // const result = await axios.get(url);
-    const app = ReactDOMServer.renderToString(<Mainpage />);
+    const app = ReactDOMServer.renderToString(<SSRApp />);
     const html = indexFile.replace(
       '<div id="root"></div>',
       `<div id="root">${app}</div>`

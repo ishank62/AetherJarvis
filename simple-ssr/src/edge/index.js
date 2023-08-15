@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOMServer from "react-dom/server";
-// import SSRApp from "../SSRApp";
-import Mainpage from '../components/App/App';
+import SSRApp from "../SSRApp";
+// import Mainpage from '../components/App/App';
 
 const indexFile = `
 <!DOCTYPE html>
@@ -28,7 +28,7 @@ const handler = async function (event) {
   try {
     const request = event.Records[0].cf.request;
     if (request.uri === "/edgessr") {
-      const app = ReactDOMServer.renderToString(<Mainpage />);
+      const app = ReactDOMServer.renderToString(<SSRApp />);
       const html = indexFile.replace(
         '<div id="root"></div>',
         `<div id="root">${app}</div>`

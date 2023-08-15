@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import ProductList from "./components/ProductList";
+import Mainpage from "./components/App/App";
 
-const SSRApp = ({ data }) => {
-  const [result, setResult] = useState({ loading: false, products: data });
+const SSRApp = () => {
+  // const [result, setResult] = useState({ loading: false, products: data });
   return (
     <div>
-      <ProductList result={result} />
+      <Mainpage />
     </div>
   );
 };
