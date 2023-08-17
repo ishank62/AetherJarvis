@@ -9,6 +9,7 @@ warming:
 
 ## This step builds applications and creates deliverable items
 build:
+	npm run build
 	npm run cdk synth
 ## This step checks the code base with linting tools
 linting:

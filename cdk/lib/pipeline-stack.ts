@@ -27,9 +27,11 @@ export class CodePipelineStack extends Stack {
       synth: new ShellStep('Synth', {
         input: CodePipelineSource.gitHub('ishank62/AetherJarvis', 'main'),
         installCommands: [
+          'cd cdk',
           'make warming'
         ],
         commands: [
+          'cd cdk',
           'make build'
         ],
         primaryOutputDirectory: 'cdk/cdk.out'
