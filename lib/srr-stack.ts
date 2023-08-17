@@ -39,13 +39,13 @@ export class SsrStack extends Stack {
     mySiteBucket.grantRead(originAccessIdentity);
 
     new s3deploy.BucketDeployment(this, "Client-side React app", {
-      sources: [s3deploy.Source.asset("../simple-ssr/build/")],
+      sources: [s3deploy.Source.asset("simple-ssr/build/")],
       destinationBucket: mySiteBucket,
     });
 
     const ssrFunction = new lambda.Function(this, "ssrHandler", {
       runtime: lambda.Runtime.NODEJS_16_X,
-      code: lambda.Code.fromAsset("../simple-ssr/server-build"),
+      code: lambda.Code.fromAsset("simple-ssr/server-build"),
       memorySize: 128,
       timeout: Duration.seconds(5),
       handler: "index.handler",
@@ -53,7 +53,7 @@ export class SsrStack extends Stack {
 
     const ssrEdgeFunction = new lambda.Function(this, "ssrEdgeHandler", {
       runtime: lambda.Runtime.NODEJS_16_X,
-      code: lambda.Code.fromAsset("../simple-ssr/edge-build"),
+      code: lambda.Code.fromAsset("simple-ssr/edge-build"),
       memorySize: 128,
       timeout: Duration.seconds(5),
       handler: "index.handler",

@@ -9,7 +9,7 @@ export class ApiStack extends Stack {
     super(scope, id, props);
 
     // 👇 get access to the secret object
-    const dbPasswordSecret = secretsmanager.Secret.fromSecretNameV2(
+    const openAIApiKeySecret = secretsmanager.Secret.fromSecretNameV2(
       this,
       'openai-api-key',
       'OpenAIApiKey',
@@ -17,12 +17,12 @@ export class ApiStack extends Stack {
 
     const apiFunction = new lambda.Function(this, "apiHandler", {
       runtime: lambda.Runtime.NODEJS_18_X,
-      code: lambda.Code.fromAsset("../simple-ssr/api"),
+      code: lambda.Code.fromAsset("simple-ssr/api"),
       memorySize: 128,
       timeout: Duration.seconds(5),
       handler: "index.handler",
       environment: {
-        OPENAI_API_KEY: dbPasswordSecret.secretValue.toString(),
+        OPENAI_API_KEY: openAIApiKeySecret.secretValue.toString(),
       }
     });
 
