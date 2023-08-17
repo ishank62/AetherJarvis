@@ -9,4 +9,6 @@ const app = new App();
 
 new ApiStack(app, "SSRApiStack", { env: demoEnv });
 new SsrStack(app, "SSRAppStack", { env: demoEnv });
-new CodePipelineStack(app, 'CodePipeline');
+new CodePipelineStack(app, 'CodePipeline', { env: demoEnv });
+
+// app.synth();

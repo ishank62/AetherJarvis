@@ -12,3 +12,7 @@ cdk.out
 
 # IDEs
 .idea
+
+#testing
+coverage
+test-report.xml

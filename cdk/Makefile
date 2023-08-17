@@ -28,8 +28,9 @@ cooling:
 clean:
 	git clean -xdf
 ## Deploy application to the Dev AWS account manually
+## npm run cdk -- deploy Dev-*
 deploy:
-	npm run cdk -- deploy Dev-*
+	npm run cdk -- deploy SSRApiStack
 ## Execute integration tests for verification
 validate:
 	./test/test_validate.sh

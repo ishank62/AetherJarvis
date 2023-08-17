@@ -1,17 +1,17 @@
 import * as cdk from 'aws-cdk-lib'
 import { Template } from 'aws-cdk-lib/assertions'
-import { MainStack } from '../lib/main-stack'
+import { ApiStack } from '../lib/api-stack'
 
 const app = new cdk.App()
-const stack = new MainStack(app, 'Dev-MainStack')
+const stack = new ApiStack(app, 'SSRApiStack')
 const template = Template.fromStack(stack)
 
 test('Event Bus has been created', () => {
   // Assessment
-  template.hasResource('AWS::Events::EventBus', '')
+  template.hasResource('AWS::Lambda::Function', '')
 })
 
-test('MainStack has output', () => {
+test('ApiStack has output', () => {
   // Assessment
-  template.hasOutput('EventBusName', '')
+  template.hasOutput('apiurl', '')
 })

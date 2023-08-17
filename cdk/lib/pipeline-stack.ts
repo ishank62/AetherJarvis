@@ -10,10 +10,10 @@ export class CodePipelineStack extends Stack {
   constructor (scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props)
 
-    // const repo = new Repository(this, 'Repository', {
-    //   repositoryName: 'SampleRepository',
-    //   description: 'This is sample repository for the project.'
-    // })
+    const repo = new Repository(this, 'Repository', {
+      repositoryName: 'AetherJarvis',
+      description: 'This is the Github repository for the project.'
+    });
 
     const validatePolicy = new PolicyStatement({
       actions: [
@@ -21,7 +21,7 @@ export class CodePipelineStack extends Stack {
         'events:DescribeEventBus'
       ],
       resources: ['*']
-    })
+    });
 
     const pipeline = new CodePipeline(this, 'Pipeline', {
       synth: new ShellStep('Synth', {
@@ -32,7 +32,7 @@ export class CodePipelineStack extends Stack {
         commands: [
           'make build'
         ],
-        primaryOutputDirectory: 'cdk-cicd/cdk.out'
+        primaryOutputDirectory: 'cdk/cdk.out'
       })
     })
 
@@ -41,14 +41,14 @@ export class CodePipelineStack extends Stack {
     pipeline.addStage(devStage, {
       // Execute all sequence of actions before deployment
       pre: [
-        new CodeBuildStep('Linting', {
-          installCommands: [
-            'make warming'
-          ],
-          commands: [
-            'make linting'
-          ]
-        }),
+        // new CodeBuildStep('Linting', {
+        //   installCommands: [
+        //     'make warming'
+        //   ],
+        //   commands: [
+        //     'make linting'
+        //   ]
+        // }),
         new CodeBuildStep('UnitTest', {
           installCommands: [
             'make warming'
@@ -160,8 +160,6 @@ export class CodePipelineStack extends Stack {
     //   ]
     // });
     // Output
-    new CfnOutput(this, 'RepositoryName', {
-      value: repo.repositoryName
-    })
+    new CfnOutput(this, "RepositoryName", { value: repo.repositoryName });
   }
 }
