@@ -1,8 +1,7 @@
 import React from "react";
 import ReactDOMServer from "react-dom/server";
 import SSRApp from "../SSRApp";
-import config from "../config.json";
-import axios from "axios";
+// import Mainpage from '../components/App/App';
 
 const indexFile = `
 <!DOCTYPE html>
@@ -20,7 +19,6 @@ const indexFile = `
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-    <div>Rendered on Edge</div>
   </body>
 </html>
 `;
@@ -29,9 +27,7 @@ const handler = async function (event) {
   try {
     const request = event.Records[0].cf.request;
     if (request.uri === "/edgessr") {
-      const url = config.SSRApiStack.apiurl;
-      const result = await axios.get(url);
-      const app = ReactDOMServer.renderToString(<SSRApp data={result.data} />);
+      const app = ReactDOMServer.renderToString(<SSRApp />);
       const html = indexFile.replace(
         '<div id="root"></div>',
         `<div id="root">${app}</div>`
