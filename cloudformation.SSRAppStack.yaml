@@ -7,19 +7,49 @@ Parameters:
     Default: /cdk-bootstrap/hnb659fds/version
     Description: Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]
 Resources:
+  ssrloggingbucket7084DF70:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: LogDeliveryWrite
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: ObjectWriter
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+    Metadata:
+      aws:cdk:path: SSRAppStack/ssr-logging-bucket/Resource
   ssrsite39803435:
     Type: AWS::S3::Bucket
     Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
       BucketName:
         Ref: mySiteBucketName
+      LoggingConfiguration:
+        DestinationBucketName:
+          Ref: ssrloggingbucket7084DF70
+        LogFilePrefix: s3-access-logs
       Tags:
         - Key: aws-cdk:cr-owned:1f9e4d8c
           Value: "true"
       WebsiteConfiguration:
         ErrorDocument: error.html
         IndexDocument: index.html
-    UpdateReplacePolicy: Delete
-    DeletionPolicy: Delete
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
     Metadata:
       aws:cdk:path: SSRAppStack/ssr-site/Resource
   ssrsitePolicy6685C54C:
@@ -30,8 +60,8 @@ Resources:
       PolicyDocument:
         Statement:
           - Action:
-              - s3:GetObject*
               - s3:GetBucket*
+              - s3:GetObject*
               - s3:List*
             Effect: Allow
             Principal:
@@ -96,7 +126,7 @@ Resources:
       SourceBucketNames:
         - Fn::Sub: cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1
       SourceObjectKeys:
-        - cc47c5cf250c2eb1bc325e76f198e6d9ac8418406981a5dfb07ccea07ca7d041.zip
+        - 08091ef6ace12ba8e22c8931b3bf2339b7d83f8e5f908a9dd7af3ba78e15730e.zip
       DestinationBucketName:
         Ref: ssrsite39803435
       Prune: true
@@ -128,35 +158,31 @@ Resources:
       PolicyDocument:
         Statement:
           - Action:
-              - s3:GetObject*
               - s3:GetBucket*
+              - s3:GetObject*
               - s3:List*
             Effect: Allow
             Resource:
               - Fn::Join:
                   - ""
-                  - - "arn:"
-                    - Ref: AWS::Partition
-                    - ":s3:::"
-                    - Fn::Sub: cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1
-              - Fn::Join:
-                  - ""
-                  - - "arn:"
-                    - Ref: AWS::Partition
-                    - ":s3:::"
+                  - - "arn:aws:s3:::"
                     - Fn::Sub: cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1
                     - /*
+              - Fn::Join:
+                  - ""
+                  - - "arn:aws:s3:::"
+                    - Fn::Sub: cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1
           - Action:
-              - s3:GetObject*
-              - s3:GetBucket*
-              - s3:List*
+              - s3:Abort*
               - s3:DeleteObject*
+              - s3:GetBucket*
+              - s3:GetObject*
+              - s3:List*
               - s3:PutObject
               - s3:PutObjectLegalHold
               - s3:PutObjectRetention
               - s3:PutObjectTagging
               - s3:PutObjectVersionTagging
-              - s3:Abort*
             Effect: Allow
             Resource:
               - Fn::GetAtt:
@@ -225,7 +251,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1
-        S3Key: 5aff513e2a8b386aa9b06cf9c4087dd0af7656e1308f1abeba18a7928ee1a2d7.zip
+        S3Key: c6999c4eda3c6f1e1ecd27ba823978254f67df0774c9f295225c1e9207dcf19c.zip
       Role:
         Fn::GetAtt:
           - ssrHandlerServiceRole086FB3F9
@@ -233,12 +259,12 @@ Resources:
       Handler: index.handler
       MemorySize: 128
       Runtime: nodejs16.x
-      Timeout: 5
+      Timeout: 180
     DependsOn:
       - ssrHandlerServiceRole086FB3F9
     Metadata:
       aws:cdk:path: SSRAppStack/ssrHandler/Resource
-      aws:asset:path: asset.5aff513e2a8b386aa9b06cf9c4087dd0af7656e1308f1abeba18a7928ee1a2d7
+      aws:asset:path: asset.c6999c4eda3c6f1e1ecd27ba823978254f67df0774c9f295225c1e9207dcf19c
       aws:asset:is-bundled: false
       aws:asset:property: Code
   ssrEdgeHandlerServiceRole338946DD:
@@ -249,11 +275,9 @@ Resources:
           - Action: sts:AssumeRole
             Effect: Allow
             Principal:
-              Service: lambda.amazonaws.com
-          - Action: sts:AssumeRole
-            Effect: Allow
-            Principal:
-              Service: edgelambda.amazonaws.com
+              Service:
+                - edgelambda.amazonaws.com
+                - lambda.amazonaws.com
         Version: "2012-10-17"
       ManagedPolicyArns:
         - Fn::Join:
@@ -269,7 +293,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1
-        S3Key: 009b1193abc0efe1f166401705dcebd7974191b938db40490d2815ab7469e386.zip
+        S3Key: 08cc9123f51c1641b8632808e7691aa43c5e92264fc85f4048e1e1829c3ef9ec.zip
       Role:
         Fn::GetAtt:
           - ssrEdgeHandlerServiceRole338946DD
@@ -277,12 +301,12 @@ Resources:
       Handler: index.handler
       MemorySize: 128
       Runtime: nodejs16.x
-      Timeout: 5
+      Timeout: 180
     DependsOn:
       - ssrEdgeHandlerServiceRole338946DD
     Metadata:
       aws:cdk:path: SSRAppStack/ssrEdgeHandler/Resource
-      aws:asset:path: asset.009b1193abc0efe1f166401705dcebd7974191b938db40490d2815ab7469e386
+      aws:asset:path: asset.08cc9123f51c1641b8632808e7691aa43c5e92264fc85f4048e1e1829c3ef9ec
       aws:asset:is-bundled: false
       aws:asset:property: Code
   ssrEdgeHandlerVersion46DD2346:
@@ -298,40 +322,7 @@ Resources:
       Name: ssrEndpoint
     Metadata:
       aws:cdk:path: SSRAppStack/ssrEndpoint/Resource
-  ssrEndpointCloudWatchRoleCB6761D0:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-          - Action: sts:AssumeRole
-            Effect: Allow
-            Principal:
-              Service: apigateway.amazonaws.com
-        Version: "2012-10-17"
-      ManagedPolicyArns:
-        - Fn::Join:
-            - ""
-            - - "arn:"
-              - Ref: AWS::Partition
-              - :iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
-    UpdateReplacePolicy: Retain
-    DeletionPolicy: Retain
-    Metadata:
-      aws:cdk:path: SSRAppStack/ssrEndpoint/CloudWatchRole/Resource
-  ssrEndpointAccountB096A98D:
-    Type: AWS::ApiGateway::Account
-    Properties:
-      CloudWatchRoleArn:
-        Fn::GetAtt:
-          - ssrEndpointCloudWatchRoleCB6761D0
-          - Arn
-    DependsOn:
-      - ssrEndpoint84341A64
-    UpdateReplacePolicy: Retain
-    DeletionPolicy: Retain
-    Metadata:
-      aws:cdk:path: SSRAppStack/ssrEndpoint/Account
-  ssrEndpointDeployment345D704B444a8180828c1df3e9d3bce6d87cae1b:
+  ssrEndpointDeployment345D704Bb511ff5da70e93a3dbc064044a892a50:
     Type: AWS::ApiGateway::Deployment
     Properties:
       RestApiId:
@@ -349,10 +340,8 @@ Resources:
       RestApiId:
         Ref: ssrEndpoint84341A64
       DeploymentId:
-        Ref: ssrEndpointDeployment345D704B444a8180828c1df3e9d3bce6d87cae1b
+        Ref: ssrEndpointDeployment345D704Bb511ff5da70e93a3dbc064044a892a50
       StageName: prod
-    DependsOn:
-      - ssrEndpointAccountB096A98D
     Metadata:
       aws:cdk:path: SSRAppStack/ssrEndpoint/DeploymentStage.prod/Resource
   ssrEndpointproxyF8CFA92E:
@@ -379,9 +368,7 @@ Resources:
       SourceArn:
         Fn::Join:
           - ""
-          - - "arn:"
-            - Ref: AWS::Partition
-            - ":execute-api:us-east-1:"
+          - - "arn:aws:execute-api:us-east-1:"
             - Ref: AWS::AccountId
             - ":"
             - Ref: ssrEndpoint84341A64
@@ -402,9 +389,7 @@ Resources:
       SourceArn:
         Fn::Join:
           - ""
-          - - "arn:"
-            - Ref: AWS::Partition
-            - ":execute-api:us-east-1:"
+          - - "arn:aws:execute-api:us-east-1:"
             - Ref: AWS::AccountId
             - ":"
             - Ref: ssrEndpoint84341A64
@@ -426,9 +411,7 @@ Resources:
         Uri:
           Fn::Join:
             - ""
-            - - "arn:"
-              - Ref: AWS::Partition
-              - :apigateway:us-east-1:lambda:path/2015-03-31/functions/
+            - - arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/
               - Fn::GetAtt:
                   - ssrHandler92F221AC
                   - Arn
@@ -447,9 +430,7 @@ Resources:
       SourceArn:
         Fn::Join:
           - ""
-          - - "arn:"
-            - Ref: AWS::Partition
-            - ":execute-api:us-east-1:"
+          - - "arn:aws:execute-api:us-east-1:"
             - Ref: AWS::AccountId
             - ":"
             - Ref: ssrEndpoint84341A64
@@ -470,9 +451,7 @@ Resources:
       SourceArn:
         Fn::Join:
           - ""
-          - - "arn:"
-            - Ref: AWS::Partition
-            - ":execute-api:us-east-1:"
+          - - "arn:aws:execute-api:us-east-1:"
             - Ref: AWS::AccountId
             - ":"
             - Ref: ssrEndpoint84341A64
@@ -496,9 +475,7 @@ Resources:
         Uri:
           Fn::Join:
             - ""
-            - - "arn:"
-              - Ref: AWS::Partition
-              - :apigateway:us-east-1:lambda:path/2015-03-31/functions/
+            - - arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/
               - Fn::GetAtt:
                   - ssrHandler92F221AC
                   - Arn
@@ -585,7 +562,7 @@ Resources:
   CDKMetadata:
     Type: AWS::CDK::Metadata
     Properties:
-      Analytics: v2:deflate64:H4sIAAAAAAAA/21SyW7CMBD9Fu7GZblwDUGVKlGBQGqPkeMM6YBjI49dGkX599oO24HTvHmzP3vGFxM+GYkLjWV1Gissebd3Qp5YftBbYUUDDiwL8aKjOe+WXp7AxeAVDWZrFMr2QV/9wVkKgp5JZXx1sEY73m0s1qgzKYHoowLt0KXiPOa8x5zXGffwN5QrJGex9A6NjrXPfs9oXnQVnJVpm1DMh0VWd4IJInDEs2h6pkRTVoJ3oc1atGC/wFJsu0ddK3BGv3st06A7CKl3fEsP3BPcgm2QKK2DouHdziiIgWQfig2oZ+KMtXBwES3v1mmhHZDLzphqHjCIYnw44emaeP7DC+9Xp0EDCKXGWwnxGdjWmr/2xlwbD/gT3I+pIjWgvo94493Zu6tAhYriFOEzSIU8u1CuMOnFko5xXBCM5Z6caV4OuYGeaVMBP9Lb73TBpzM+HR0JcWzDYdgA3w32Hx03SwieAgAA
+      Analytics: v2:deflate64:H4sIAAAAAAAA/21STW/CMAz9LdxDxseFKxRNmsQEAmk7ojQ1nSFNUJyMVVX/+5K0FA6c/Gw/f71kxhcTPhmJG41lcRkrzHlzcEJeWHbSO2FFBQ4sC/ljQ3PerLy8gIvJHnVmZxTK+hHu/c5ZCYKWSWV8cbJGO95sLZaol1IC0UcB2qFLxVnkvEfOa8aQ/oZ8jeQs5t6h0bH22W8ZzY9NAVdl6ioU826R9RBggggc8WU0LVOiygvBm9BmI2qwX2Aptj2gLhU4o9+9lmnQAAJ1wHd6iD3BHdgKidI6KCre7I2CmEj2oViHWiauWAoHN1HzZpMW2gO55RVTTQ+fTog3P7zwaGXq3oHAN95KiNqznTV/9T3Sd+vwJ7gfU8RQh9o24q13V+96VY4qKnIMP0Aq5MsbZQqTSCyJF8cFlVjmyZnq5ZA7aJk2BfAzvf1OF3w649PRmRDH1ofnrYDvO/sPOPLClZMCAAA=
     Metadata:
       aws:cdk:path: SSRAppStack/CDKMetadata/Default
 Outputs:
@@ -653,4 +630,3 @@ Rules:
                   - "5"
                 - Ref: BootstrapVersion
         AssertDescription: CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.
-

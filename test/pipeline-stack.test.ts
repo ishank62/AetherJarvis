@@ -22,5 +22,5 @@ test('There are 8 CodeBuild objects in use', () => {
 
 test('CodePipeline has repository name in output', () => {
   // Assessment
-  // template.hasOutput('RepositoryName', '')
+  template.hasOutput('RepositoryName', '')
 })

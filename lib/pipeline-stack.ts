@@ -1,4 +1,3 @@
-import { Repository } from 'aws-cdk-lib/aws-codecommit'
 import { BuildSpec } from 'aws-cdk-lib/aws-codebuild'
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam'
 import { CodeBuildStep, CodePipeline, CodePipelineSource, ShellStep } from 'aws-cdk-lib/pipelines'
@@ -10,10 +9,10 @@ export class CodePipelineStack extends Stack {
   constructor (scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props)
 
-    const repo = new Repository(this, 'Repository', {
+    const repo = {
       repositoryName: 'AetherJarvis',
       description: 'This is the Github repository for the project.'
-    });
+    };
 
     const validatePolicy = new PolicyStatement({
       actions: [
@@ -120,44 +119,44 @@ export class CodePipelineStack extends Stack {
         })
       ]
     })
-    // // Add test deployment
-    // const testStage = new Deployment(this, 'Test')
-    // pipeline.addStage(testStage, {
-    //   // Execute validation check for post-deployment
-    //   post: [
-    //     new CodeBuildStep('Validate', {
-    //       env: {
-    //         STAGE: testStage.stageName
-    //       },
-    //       installCommands: [
-    //         'make warming'
-    //       ],
-    //       commands: [
-    //         'make validate'
-    //       ],
-    //       rolePolicyStatements: [validatePolicy]
-    //     })
-    //   ]
-    // })
-    // // Add prod deployment
-    // const prodStage = new Deployment(this, 'Prod')
-    // pipeline.addStage(prodStage, {
-    //   // Execute validation check for post-deployment
-    //   post: [
-    //     new CodeBuildStep('Validate', {
-    //       env: {
-    //         STAGE: prodStage.stageName
-    //       },
-    //       installCommands: [
-    //         'make warming'
-    //       ],
-    //       commands: [
-    //         'make validate'
-    //       ],
-    //       rolePolicyStatements: [validatePolicy]
-    //     })
-    //   ]
-    // });
+    // Add test deployment
+    const testStage = new Deployment(this, 'Test')
+    pipeline.addStage(testStage, {
+      // Execute validation check for post-deployment
+      post: [
+        new CodeBuildStep('Validate', {
+          env: {
+            STAGE: testStage.stageName
+          },
+          installCommands: [
+            'make warming'
+          ],
+          commands: [
+            'make validate'
+          ],
+          rolePolicyStatements: [validatePolicy]
+        })
+      ]
+    })
+    // Add prod deployment
+    const prodStage = new Deployment(this, 'Prod')
+    pipeline.addStage(prodStage, {
+      // Execute validation check for post-deployment
+      post: [
+        new CodeBuildStep('Validate', {
+          env: {
+            STAGE: prodStage.stageName
+          },
+          installCommands: [
+            'make warming'
+          ],
+          commands: [
+            'make validate'
+          ],
+          rolePolicyStatements: [validatePolicy]
+        })
+      ]
+    });
     // Output
     new CfnOutput(this, "RepositoryName", { value: repo.repositoryName });
   }

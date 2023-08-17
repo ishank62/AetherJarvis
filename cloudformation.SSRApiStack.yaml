@@ -23,20 +23,28 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1
-        S3Key: b55de8b56cb5d94a23d26fa73c011002a8b7adc56eeedc83bac3ddb76e57cba7.zip
+        S3Key: c952c7f7073788d6bbc6286596c225bade3fc61559ca2c6c20be59552553dee1.zip
       Role:
         Fn::GetAtt:
           - apiHandlerServiceRoleF61AABDA
           - Arn
+      Environment:
+        Variables:
+          OPENAI_API_KEY:
+            Fn::Join:
+              - ""
+              - - "{{resolve:secretsmanager:arn:aws:secretsmanager:us-east-1:"
+                - Ref: AWS::AccountId
+                - :secret:OpenAIApiKey:SecretString:::}}
       Handler: index.handler
       MemorySize: 128
       Runtime: nodejs18.x
-      Timeout: 5
+      Timeout: 180
     DependsOn:
       - apiHandlerServiceRoleF61AABDA
     Metadata:
       aws:cdk:path: SSRApiStack/apiHandler/Resource
-      aws:asset:path: asset.b55de8b56cb5d94a23d26fa73c011002a8b7adc56eeedc83bac3ddb76e57cba7
+      aws:asset:path: asset.c952c7f7073788d6bbc6286596c225bade3fc61559ca2c6c20be59552553dee1
       aws:asset:is-bundled: false
       aws:asset:property: Code
   apiEndpoint154F0C18:
@@ -45,40 +53,7 @@ Resources:
       Name: apiEndpoint
     Metadata:
       aws:cdk:path: SSRApiStack/apiEndpoint/Resource
-  apiEndpointCloudWatchRole75D09583:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-          - Action: sts:AssumeRole
-            Effect: Allow
-            Principal:
-              Service: apigateway.amazonaws.com
-        Version: "2012-10-17"
-      ManagedPolicyArns:
-        - Fn::Join:
-            - ""
-            - - "arn:"
-              - Ref: AWS::Partition
-              - :iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
-    UpdateReplacePolicy: Retain
-    DeletionPolicy: Retain
-    Metadata:
-      aws:cdk:path: SSRApiStack/apiEndpoint/CloudWatchRole/Resource
-  apiEndpointAccount7ECC9ADA:
-    Type: AWS::ApiGateway::Account
-    Properties:
-      CloudWatchRoleArn:
-        Fn::GetAtt:
-          - apiEndpointCloudWatchRole75D09583
-          - Arn
-    DependsOn:
-      - apiEndpoint154F0C18
-    UpdateReplacePolicy: Retain
-    DeletionPolicy: Retain
-    Metadata:
-      aws:cdk:path: SSRApiStack/apiEndpoint/Account
-  apiEndpointDeploymentDCAB24BF084d88e1e7326e91ee9d015548344505:
+  apiEndpointDeploymentDCAB24BF5b6690d5e71e886f1620174da51e18e7:
     Type: AWS::ApiGateway::Deployment
     Properties:
       RestApiId:
@@ -98,10 +73,8 @@ Resources:
       RestApiId:
         Ref: apiEndpoint154F0C18
       DeploymentId:
-        Ref: apiEndpointDeploymentDCAB24BF084d88e1e7326e91ee9d015548344505
+        Ref: apiEndpointDeploymentDCAB24BF5b6690d5e71e886f1620174da51e18e7
       StageName: prod
-    DependsOn:
-      - apiEndpointAccount7ECC9ADA
     Metadata:
       aws:cdk:path: SSRApiStack/apiEndpoint/DeploymentStage.prod/Resource
   apiEndpointOPTIONS4ED99C11:
@@ -184,9 +157,7 @@ Resources:
       SourceArn:
         Fn::Join:
           - ""
-          - - "arn:"
-            - Ref: AWS::Partition
-            - ":execute-api:us-east-1:"
+          - - "arn:aws:execute-api:us-east-1:"
             - Ref: AWS::AccountId
             - ":"
             - Ref: apiEndpoint154F0C18
@@ -207,9 +178,7 @@ Resources:
       SourceArn:
         Fn::Join:
           - ""
-          - - "arn:"
-            - Ref: AWS::Partition
-            - ":execute-api:us-east-1:"
+          - - "arn:aws:execute-api:us-east-1:"
             - Ref: AWS::AccountId
             - ":"
             - Ref: apiEndpoint154F0C18
@@ -231,9 +200,7 @@ Resources:
         Uri:
           Fn::Join:
             - ""
-            - - "arn:"
-              - Ref: AWS::Partition
-              - :apigateway:us-east-1:lambda:path/2015-03-31/functions/
+            - - arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/
               - Fn::GetAtt:
                   - apiHandler8027B936
                   - Arn
@@ -252,9 +219,7 @@ Resources:
       SourceArn:
         Fn::Join:
           - ""
-          - - "arn:"
-            - Ref: AWS::Partition
-            - ":execute-api:us-east-1:"
+          - - "arn:aws:execute-api:us-east-1:"
             - Ref: AWS::AccountId
             - ":"
             - Ref: apiEndpoint154F0C18
@@ -275,9 +240,7 @@ Resources:
       SourceArn:
         Fn::Join:
           - ""
-          - - "arn:"
-            - Ref: AWS::Partition
-            - ":execute-api:us-east-1:"
+          - - "arn:aws:execute-api:us-east-1:"
             - Ref: AWS::AccountId
             - ":"
             - Ref: apiEndpoint154F0C18
@@ -301,9 +264,7 @@ Resources:
         Uri:
           Fn::Join:
             - ""
-            - - "arn:"
-              - Ref: AWS::Partition
-              - :apigateway:us-east-1:lambda:path/2015-03-31/functions/
+            - - arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/
               - Fn::GetAtt:
                   - apiHandler8027B936
                   - Arn
@@ -313,7 +274,7 @@ Resources:
   CDKMetadata:
     Type: AWS::CDK::Metadata
     Properties:
-      Analytics: v2:deflate64:H4sIAAAAAAAA/1VOQVLDMAx8S++OaMql1xSGEwyd8ICO64igJrYzkUzJZPJ3bLdAOe2utNLuBrZrWK/0mQvTdEVPR5jfRJtOxdFh7rU9Nhrmp+CMkHfq4d3d8j2OlpijWhRpC3Pte0yLhIvi+4NmRmGoEkQNu2A6lJ1mVHqgVgue9QTzcw6qkaUaKD/4o5UxPjhRjzj0frIYaZzeqFi4zakXEk99GA3mkBeUD9+k5ZXtR/81/ViuSZkvy++lynXTN3Jt8rwGGYL8cyvnG4QT332WWyg3UK5OTFSMsSlZhPqC30RnawRgAQAA
+      Analytics: v2:deflate64:H4sIAAAAAAAA/1VPQU7DMBB8S+/O0pRLry2IUxFVeEDlJkvYJraj7JoSWfk7tlNQOc3MjjUz3sB2DeuVvnJRN13R0xnCu+i6UxWy82ONKnqn0GtzbjSEF29rIWfV04e950ccDTFHNSvSBkLlekxGwlnx40kzozDsEkQNe193KHvNsWGgVgte9QThkItiuewGygE3+oxD7yaDVtL1TsW5ba5ayO/unPyK8umaZN7YcXTf09/XlvjM51nlaSmEbJusNy+Dl3+PlHUNwoUfvsotlBsoVxcmKkZvhQxCteAPtux0tlUBAAA=
     Metadata:
       aws:cdk:path: SSRApiStack/CDKMetadata/Default
 Outputs:
@@ -357,4 +318,3 @@ Rules:
                   - "5"
                 - Ref: BootstrapVersion
         AssertDescription: CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.
-

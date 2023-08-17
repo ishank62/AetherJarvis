@@ -158,8 +158,8 @@ const Mainpage = () => {
       <div id="model-select-container">
         <label htmlFor="model-select">Select model:</label>
         <select id="model-select" value={modelValue} onChange={(event) => setModelValue(event.target.value)}>
-          <option value="gpt">GPT-3 (Understand and generate natural language )</option>
-          <option value="codex">Codex (Understand and generate code, including translating natural language to code)
+          <option value="gpt">GPT-3.5 Turbo Codex (Understand and generate code, including translating natural language to code )</option>
+          <option value="codex">Language (Understand and generate natural language)
           </option>
           <option value="image">Create Image (Create AI image using DALL·E models)</option>
         </select>
