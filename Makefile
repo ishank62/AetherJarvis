@@ -6,14 +6,12 @@ all: warming build linting security unittest cooling
 warming:
 	@echo "Start the project building"
 	npm install
-	cd simple-ssr
-	npm install
+	cd simple-ssr && npm install
 
 ## This step builds applications and creates deliverable items
 build:
 	npm run build
 	cd simple-ssr && npm run build-all
-	cd ..
 	npm run cdk synth 
 ## This step checks the code base with linting tools
 linting:
