@@ -31,8 +31,7 @@ export class CodePipelineStack extends Stack {
         ],
         commands: [
           'make build'
-        ],
-        primaryOutputDirectory: 'cdk/cdk.out'
+        ]
       })
     })
 
