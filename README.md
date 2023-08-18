@@ -1,6 +1,7 @@
 # AetherJarvis
 
-## ChatGpt Scalable Architecture using Serverless Architecture, Server Side Rendering, Edge location Caching/distribution for high availability & performance deployed using Infrastructure as Code(IAC) featuring 3 AI models (Image, Code/Chat, language).
+## ChatGpt Scalable Architecture using AWS Serverless Architecture, Server-Side Rendering, Edge-location Caching/distribution for high availability & performance deployed using Infrastructure as Code(IAC) with CI/CD featuring 3 AI models (Image, Code/Chat, language).
+
 
 Running version of the application can be viewed on the following url:- <br>
 **Demo Url - https://d8m7lywmomzjq.cloudfront.net**
