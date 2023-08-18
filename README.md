@@ -1,14 +1,15 @@
 # AetherJarvis
 
-## ChatGpt Scalable Architecture using Serverless Architecture, Server Side Rendering, Edge location Caching/distribution for high availability & performance deployed using Infrastructure as Code(IAC).
+## ChatGpt Scalable Architecture using Serverless Architecture, Server Side Rendering, Edge location Caching/distribution for high availability & performance deployed using Infrastructure as Code(IAC) featuring 3 AI models (Image, Code/Chat, language).
 
 Running version of the application can be viewed on the following url:- <br>
 **Demo Url - https://d8m7lywmomzjq.cloudfront.net**
 
-This solution uses AWS services like  `Amazon CloudFront`, `Amazon API Gateway`, `AWS Lambda`, `Lambda@Edge`, `Amazon S3`, `Cloudformation`, `AWS Secrets Manager`, `AWSCodePipeline`, `AWSCodebuild`,`AWSCodeDeploy` and`AWSCodeCommit` . It creates a fully serverless Server-Side Rendering (SSR) implementation, which automatically scales according to the workload. To deploy this solution and to provision the AWS resources, I use the AWS Cloud Development Kit (CDK).
+## Introduction
+This solution uses AWS services like  `Amazon CloudFront`, `Amazon API Gateway`, `AWS Lambda`, `Lambda@Edge`, `Amazon S3`, `Cloudformation`, `AWS Secrets Manager`, `AWS CodePipeline`, `AWS Codebuild`,`AWS CodeDeploy` and`AWS CodeCommit` . It creates a fully serverless Server-Side Rendering (SSR) implementation, which automatically scales according to the workload. To deploy this solution and to provision the AWS resources, I use the AWS Cloud Development Kit (CDK).
 
-The React app is rendered server-side with a Lambda@Edge function. This scenario is similar but rendering happens at edge locations. The requests to cloudfront are handled by the Lambda@Edge function. This sends requests to the backend and returns a static HTML page.
-Secrets OpenApikey, github-token are stored in AWS Secrets Manager.
+The `React` app is rendered server-side with a Lambda@Edge function. This scenario is similar but rendering happens at edge locations. The requests to cloudfront are handled by the Lambda@Edge function. This sends requests to the backend built in `Nodejs` and returns a static HTML page.
+Secrets OpenApikey, github-token are stored in `AWS Secrets Manager`.
 
 ## Features
 - User-friendly interface for making requests to the OpenAI API
@@ -61,13 +62,13 @@ In the Dev stage there are 3 steps `Linting`, `Security` and `Unit Tests`. These
 
 ## CodePipeline in Action
 
-After successful initial deployment, you should have complete CI/CD pipeline with a `master` branch of `ishank62/AetherJarvis` as a Source branch. As soon as you commit changes to the `main` branch the AWS CodePipeline will trigger and execute following sequence of actions:
+After successful initial deployment, you should have complete CI/CD pipeline with a `master` branch of `ishank62/AetherJarvis` as a Source branch. As soon as you commit changes to the `master` branch the AWS CodePipeline will trigger and execute following sequence of actions:
 
-1. Get your code from the AWS CodeCommit repository
+1. Get your code from the AWS CodeCommit repository linked to Github
 2. Build your code
 3. Update the pipeline itself (SelfMutate)
 4. Execute 3 parallel jobs for `Linting`, `Security` and `UnitTests` checks
-5. In case of success the pipeline will deploy the Main stack with Infrastructure as Code example
+5. In case of success the pipeline will deploy the API stack, App Stack with Infrastructure as Code
 6. Execute post-deployment check for deployed resources
 
 ![CodePipeline 1](docs/Codepipeline1.png)
@@ -80,7 +81,7 @@ After successful initial deployment, you should have complete CI/CD pipeline wit
 
 ![Cloudformation Stacks](docs/All-Stacks.png)
 
-## Prerequsites
+## Prerequisites
 
 This project use AWS CDK v2 based on Typescript. The developer laptop/computer should have following software.
 * [AWS CDK v2](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) v2.61.0
