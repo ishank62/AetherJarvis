@@ -85,7 +85,7 @@ After successful initial deployment, you should have complete CI/CD pipeline wit
 This project use AWS CDK v2 based on Typescript. The developer laptop/computer should have following software.
 * [AWS CDK v2](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) v2.61.0
 * [cfn_nag](https://github.com/stelligent/cfn_nag) v0.8.10 - for security checks
-* [ruby](https://www.ruby-lang.org/en/downloads/) v3.2.2
+* [ruby](https://www.ruby-lang.org/en/downloads/) v3.1.0
 * [node](https://nodejs.org/en/download/) v19
 * [sam cli](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html) v1.95.0
 * [aws cli](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) v2.13.5
