@@ -24,7 +24,7 @@ export class CodePipelineStack extends Stack {
 
     const pipeline = new CodePipeline(this, 'Pipeline', {
       synth: new ShellStep('Synth', {
-        input: CodePipelineSource.gitHub('ishank62/AetherJarvis', 'main'),
+        input: CodePipelineSource.gitHub('ishank62/AetherJarvis', 'master'),
         installCommands: [
           'make warming'
         ],
