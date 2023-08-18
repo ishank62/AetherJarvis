@@ -79,3 +79,16 @@ After successful initial deployment, you should have complete CI/CD pipeline wit
 ## Cloudformation Stacks
 
 ![Cloudformation Stacks](docs/All-Stacks.png)
+
+## Prerequsites
+
+This project use AWS CDK v2 based on Typescript. The developer laptop/computer should have following software.
+* [AWS CDK v2](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) v2.61.0
+* [cfn_nag](https://github.com/stelligent/cfn_nag) v0.8.10 - for security checks
+* [ruby](https://www.ruby-lang.org/en/downloads/) v3.2.2
+* [node](https://nodejs.org/en/download/) v19
+* [sam cli](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html) v1.95.0
+* [aws cli](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) v2.13.5
+* [cdk cli](https://docs.aws.amazon.com/cdk/v2/guide/cli.html) v2.91.0
+* [Docker](https://docs.docker.com/get-docker/) v20.10.21
+* [typescript](https://www.typescriptlang.org/) v4.9.4
