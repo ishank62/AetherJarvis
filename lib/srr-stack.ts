@@ -22,13 +22,23 @@ export class SsrStack extends Stack {
       description: "The name of S3 bucket to upload react application"
     });
 
+    const nextLoggingBucket = new s3.Bucket(this, 'ssr-logging-bucket', {
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+      encryption: s3.BucketEncryption.S3_MANAGED,
+      versioned: true,
+      accessControl: s3.BucketAccessControl.LOG_DELIVERY_WRITE,
+    });
+
     const mySiteBucket = new s3.Bucket(this, "ssr-site", {
       bucketName: mySiteBucketName.valueAsString,
       websiteIndexDocument: "index.html",
       websiteErrorDocument: "error.html",
       publicReadAccess: false,
       //only for demo not to use in production
-      removalPolicy: RemovalPolicy.DESTROY,
+      // removalPolicy: RemovalPolicy.DESTROY,
+      encryption: s3.BucketEncryption.S3_MANAGED,
+      serverAccessLogsBucket: nextLoggingBucket,
+      serverAccessLogsPrefix: 's3-access-logs',
     });
     new CfnOutput(this, "Bucket", { value: mySiteBucket.bucketName });
 
@@ -39,23 +49,23 @@ export class SsrStack extends Stack {
     mySiteBucket.grantRead(originAccessIdentity);
 
     new s3deploy.BucketDeployment(this, "Client-side React app", {
-      sources: [s3deploy.Source.asset("../simple-ssr/build/")],
+      sources: [s3deploy.Source.asset("simple-ssr/build/")],
       destinationBucket: mySiteBucket,
     });
 
     const ssrFunction = new lambda.Function(this, "ssrHandler", {
       runtime: lambda.Runtime.NODEJS_16_X,
-      code: lambda.Code.fromAsset("../simple-ssr/server-build"),
+      code: lambda.Code.fromAsset("simple-ssr/server-build"),
       memorySize: 128,
-      timeout: Duration.seconds(5),
+      timeout: Duration.seconds(180),
       handler: "index.handler",
     });
 
     const ssrEdgeFunction = new lambda.Function(this, "ssrEdgeHandler", {
       runtime: lambda.Runtime.NODEJS_16_X,
-      code: lambda.Code.fromAsset("../simple-ssr/edge-build"),
+      code: lambda.Code.fromAsset("simple-ssr/edge-build"),
       memorySize: 128,
-      timeout: Duration.seconds(5),
+      timeout: Duration.seconds(180),
       handler: "index.handler",
     });
 

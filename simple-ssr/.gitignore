@@ -3,6 +3,7 @@
 # dependencies
 /node_modules
 /api/node_modules
+/api/.env
 /.pnp
 .pnp.js
 
@@ -18,7 +19,7 @@
 !/edge-build/.keep
 
 #config
-config.json
+# config.json
 
 # misc
 .DS_Store
